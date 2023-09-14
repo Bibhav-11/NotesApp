@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NotesApp.Data;
+using NotesApp.Interface;
+using NotesApp.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddDbContext<NoteContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("NotesDb"));
 });
+builder.Services.AddScoped<INoteRepository, NoteRepository>();
+
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -25,7 +30,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://127.0.0.1:5173"));
 app.UseAuthorization();
+
 
 app.MapControllers();
 

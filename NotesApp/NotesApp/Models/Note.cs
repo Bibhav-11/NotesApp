@@ -9,6 +9,9 @@ namespace NotesApp.Models
         public string Description { get; set; } = null!;
 
         [JsonIgnore]
-        public ICollection<NoteHistory>? NoteHistories { get; set; } 
+        public ICollection<NoteActivity> NoteActivities { get; set; } = new List<NoteActivity>();
+
+        [JsonIgnore]
+        public List<NoteLabel> NoteLabels { get; set; } = new List<NoteLabel>();
     }
 }

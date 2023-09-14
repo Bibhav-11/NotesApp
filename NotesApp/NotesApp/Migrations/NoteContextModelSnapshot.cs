@@ -22,6 +22,21 @@ namespace NotesApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("NoteNoteLabel", b =>
+                {
+                    b.Property<int>("NoteLabelsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("NoteLabelsId", "NotesId");
+
+                    b.HasIndex("NotesId");
+
+                    b.ToTable("NoteNoteLabel");
+                });
+
             modelBuilder.Entity("NotesApp.Models.Note", b =>
                 {
                     b.Property<int>("Id")
@@ -43,7 +58,7 @@ namespace NotesApp.Migrations
                     b.ToTable("Notes");
                 });
 
-            modelBuilder.Entity("NotesApp.Models.NoteHistory", b =>
+            modelBuilder.Entity("NotesApp.Models.NoteActivity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,28 +73,107 @@ namespace NotesApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NoteId")
+                    b.Property<int>("NoteId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NoteId");
 
-                    b.ToTable("NoteHistories");
+                    b.ToTable("NoteActivities");
                 });
 
             modelBuilder.Entity("NotesApp.Models.NoteHistory", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NoteHistories");
+                });
+
+            modelBuilder.Entity("NotesApp.Models.NoteLabel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NoteLabels");
+                });
+
+            modelBuilder.Entity("NotesApp.Models.NoteLabelCombined", b =>
+                {
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoteLabelId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("NoteId");
+
+                    b.HasIndex("NoteLabelId");
+
+                    b.ToTable("NoteLabelsCombined");
+                });
+
+            modelBuilder.Entity("NoteNoteLabel", b =>
+                {
+                    b.HasOne("NotesApp.Models.NoteLabel", null)
+                        .WithMany()
+                        .HasForeignKey("NoteLabelsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NotesApp.Models.Note", null)
+                        .WithMany()
+                        .HasForeignKey("NotesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NotesApp.Models.NoteActivity", b =>
+                {
+                    b.HasOne("NotesApp.Models.Note", null)
+                        .WithMany("NoteActivities")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NotesApp.Models.NoteLabelCombined", b =>
+                {
                     b.HasOne("NotesApp.Models.Note", "Note")
-                        .WithMany("NoteHistories")
-                        .HasForeignKey("NoteId");
+                        .WithMany()
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NotesApp.Models.NoteLabel", "NoteLabel")
+                        .WithMany()
+                        .HasForeignKey("NoteLabelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Note");
+
+                    b.Navigation("NoteLabel");
                 });
 
             modelBuilder.Entity("NotesApp.Models.Note", b =>
                 {
-                    b.Navigation("NoteHistories");
+                    b.Navigation("NoteActivities");
                 });
 #pragma warning restore 612, 618
         }
