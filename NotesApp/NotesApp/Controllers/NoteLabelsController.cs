@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NotesApp.Data;
+using NotesApp.Interface;
 using NotesApp.Models;
 
 namespace NotesApp.Controllers
@@ -14,33 +15,25 @@ namespace NotesApp.Controllers
     [ApiController]
     public class NoteLabelsController : ControllerBase
     {
-        private readonly NoteContext _context;
+        private readonly INoteLabelRepository _repository;
 
-        public NoteLabelsController(NoteContext context)
+        public NoteLabelsController(INoteLabelRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/NoteLabels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NoteLabel>>> GetNoteLabels()
         {
-          if (_context.NoteLabels == null)
-          {
-              return NotFound();
-          }
-            return await _context.NoteLabels.ToListAsync();
+            return await _repository.GetLabels();
         }
 
         // GET: api/NoteLabels/5
         [HttpGet("{id}")]
         public async Task<ActionResult<NoteLabel>> GetNoteLabel(int id)
         {
-          if (_context.NoteLabels == null)
-          {
-              return NotFound();
-          }
-            var noteLabel = await _context.NoteLabels.FindAsync(id);
+            var noteLabel = await _repository.GetLabelById(id);
 
             if (noteLabel == null)
             {
@@ -60,23 +53,7 @@ namespace NotesApp.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(noteLabel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NoteLabelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _repository.UpdateLabel(id, noteLabel);
 
             return NoContent();
         }
@@ -86,12 +63,7 @@ namespace NotesApp.Controllers
         [HttpPost]
         public async Task<ActionResult<NoteLabel>> PostNoteLabel(NoteLabel noteLabel)
         {
-          if (_context.NoteLabels == null)
-          {
-              return Problem("Entity set 'NoteContext.NoteLabels'  is null.");
-          }
-            _context.NoteLabels.Add(noteLabel);
-            await _context.SaveChangesAsync();
+           await _repository.CreateLabel(noteLabel);
 
             return CreatedAtAction("GetNoteLabel", new { id = noteLabel.Id }, noteLabel);
         }
@@ -100,25 +72,15 @@ namespace NotesApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNoteLabel(int id)
         {
-            if (_context.NoteLabels == null)
-            {
-                return NotFound();
-            }
-            var noteLabel = await _context.NoteLabels.FindAsync(id);
+            var noteLabel = await _repository.GetLabelById(id);
             if (noteLabel == null)
             {
                 return NotFound();
             }
 
-            _context.NoteLabels.Remove(noteLabel);
-            await _context.SaveChangesAsync();
+            await _repository.DeleteLabel(id);
 
             return NoContent();
-        }
-
-        private bool NoteLabelExists(int id)
-        {
-            return (_context.NoteLabels?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

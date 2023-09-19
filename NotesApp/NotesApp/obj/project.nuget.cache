@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "IM/mB0yZOCCr+Zk+CTND3Y1ve1wl/N8VX8zb/xAUdXGotcM859TMI6eL9uy9G2r1jLoZF49Cyr9Gn4qE6T67EA==",
+  "dgSpecHash": "wLjU9g+ZTITCBRLCX0VyD14xGKzm4mK/9MmafrtyE5p+o4XBQeO7/ZaYfismWUc31Vc2roTdgR6yUQcHKfBk+w==",
   "success": true,
   "projectFilePath": "C:\\Users\\Bibhav\\Desktop\\NotesApp\\NotesApp\\NotesApp\\NotesApp.csproj",
   "expectedPackageFiles": [
@@ -59,6 +59,7 @@
     "C:\\Users\\Bibhav\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",
     "C:\\Users\\Bibhav\\.nuget\\packages\\messagepack.annotations\\2.1.152\\messagepack.annotations.2.1.152.nupkg.sha512",
     "C:\\Users\\Bibhav\\.nuget\\packages\\messagepackanalyzer\\2.1.152\\messagepackanalyzer.2.1.152.nupkg.sha512",
+    "C:\\Users\\Bibhav\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.22\\microsoft.aspnetcore.authentication.jwtbearer.6.0.22.nupkg.sha512",
     "C:\\Users\\Bibhav\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.0\\microsoft.aspnetcore.razor.language.6.0.0.nupkg.sha512",
     "C:\\Users\\Bibhav\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
     "C:\\Users\\Bibhav\\.nuget\\packages\\microsoft.build\\17.3.2\\microsoft.build.17.3.2.nupkg.sha512",

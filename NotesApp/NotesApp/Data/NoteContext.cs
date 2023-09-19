@@ -9,6 +9,8 @@ namespace NotesApp.Data
         {
             
         }
+
+        public DbSet<User> Users { get; set; }
         public DbSet<Note> Notes { get; set; }
 
         public DbSet<NoteActivity> NoteActivities { get; set; }

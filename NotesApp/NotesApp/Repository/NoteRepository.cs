@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesApp.Data;
+using NotesApp.DTO;
 using NotesApp.Interface;
 using NotesApp.Models;
+using System.Formats.Asn1;
+using System.Reflection;
 
 namespace NotesApp.Repository
 {
@@ -15,7 +18,7 @@ namespace NotesApp.Repository
 
         public async Task<bool> DeleteNote(int noteId)
         {
-            var note = await GetNoteById(noteId);
+            var note = await _context.Notes.FindAsync(noteId);
             if (note == null) { return false; }
             _context.Notes.Remove(note);
             return await Save();
@@ -27,14 +30,24 @@ namespace NotesApp.Repository
             return await _context.Notes.Where(n => n.Id == noteId).Select(n => n.NoteLabels).FirstAsync();
         }
 
-        public async Task<Note> GetNoteById(int id)
+        public async Task<NoteDTO> GetNoteById(int id)
         {
-            return await _context.Notes.FindAsync(id);
+            //return await _context.Notes.FindAsync(id);
+
+            var note = await _context.Notes.FindAsync(id);
+            var noteDTO = new NoteDTO()
+            {
+                Id = note.Id,
+                Title = note.Title,
+                Description = note.Description,
+            };
+            return noteDTO;
         }
 
-        public async Task<List<Note>> GetNotes()
+        public async Task<List<NoteDTO>> GetNotes()
         {
-            return await _context.Notes.ToListAsync();
+            //return await _context.Notes.ToListAsync();
+            return await _context.Notes.Select(note => new NoteDTO() { Id = note.Id, Description = note.Description, Title = note.Title }).ToListAsync();
         }
 
         public async Task<bool> NoteExists(int noteId)
@@ -78,6 +91,23 @@ namespace NotesApp.Repository
             _context.NoteActivities.Add(noteActivity);
             return await Save();
 
+        }
+
+        public async Task<NoteActivity> GetLastActivity(int noteId)
+        {
+            return await _context.NoteActivities.Where(na => na.NoteId == noteId).OrderBy(na => na.NoteId).LastAsync();
+        }
+
+        Task<List<Models.NoteLabel>> INoteRepository.GetLabelsByNote(int noteId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> AddLabel(int id, NoteLabel label)
+        {
+            var note = await _context.Notes.FindAsync(id);
+            note.NoteLabels.Add(label);
+            return await Save();
         }
     }
 }

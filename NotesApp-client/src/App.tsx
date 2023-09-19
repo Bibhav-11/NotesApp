@@ -6,6 +6,7 @@ import NoteCard from "./components/NoteCard";
 import NoteModal from "./components/NoteModal";
 import NoteCreate from "./components/NoteCreate";
 import NoteMenu from "./components/NoteMenu";
+import NoteDrawer from "./components/NoteDrawer";
 
 interface note {
   id: number;
@@ -42,6 +43,7 @@ function App() {
 
   useEffect(() => {
     notesapi.get("/api/notes").then((res) => setNotes(res.data));
+    notesapi.get("/api/notelabels").then((res) => console.log(res));
   }, []);
 
   const handleSubmit = async (id: number, notes: object) => {
@@ -60,7 +62,7 @@ function App() {
   };
 
   const getLastHistory: object = async (id: number) => {
-    const response = await notesapi.get(`api/notes/${id}/histories/last`);
+    const response = await notesapi.get(`api/notes/${id}/activities/last`);
     return response;
   };
 
@@ -90,32 +92,42 @@ function App() {
   });
 
   return (
-    <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem 0" }}>
-      <NoteCreate post={postNote} />
+    <Box sx={{ display: "flex" }}>
+      <NoteDrawer />
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-          gridGap: "1rem",
-          marginTop: "3rem",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "2rem 0",
+          flex: "1",
         }}
       >
-        {renderedNotes.reverse()}
-        <NoteMenu
-          handleDelete={handleDelete}
-          anchor={anchor}
-          setAnchor={setAnchor}
-          id={selectedNote?.id || null}
+        <NoteCreate post={postNote} />
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gridGap: "1rem",
+            marginTop: "3rem",
+          }}
+        >
+          {renderedNotes.reverse()}
+          <NoteMenu
+            handleDelete={handleDelete}
+            anchor={anchor}
+            setAnchor={setAnchor}
+            id={selectedNote?.id || null}
+          />
+        </Box>
+        <NoteModal
+          handleSubmit={handleSubmit}
+          selectedNote={selectedNote}
+          setSelectedNote={setSelectedNote}
+          open={open}
+          setOpen={setOpen}
+          history={getLastHistory}
         />
       </Box>
-      <NoteModal
-        handleSubmit={handleSubmit}
-        selectedNote={selectedNote}
-        setSelectedNote={setSelectedNote}
-        open={open}
-        setOpen={setOpen}
-        history={getLastHistory}
-      />
     </Box>
   );
 }

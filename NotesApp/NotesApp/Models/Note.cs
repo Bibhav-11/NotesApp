@@ -8,10 +8,10 @@ namespace NotesApp.Models
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public ICollection<NoteActivity> NoteActivities { get; set; } = new List<NoteActivity>();
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public List<NoteLabel> NoteLabels { get; set; } = new List<NoteLabel>();
     }
 }

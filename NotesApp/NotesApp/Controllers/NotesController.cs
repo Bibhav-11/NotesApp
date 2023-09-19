@@ -100,6 +100,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NotesApp.Data;
+using NotesApp.DTO;
 using NotesApp.Interface;
 using NotesApp.Models;
 using NotesApp.Repository;
@@ -108,7 +109,7 @@ using System.Runtime.CompilerServices;
 namespace NotesApp.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class NotesController : ControllerBase
     {
         private INoteRepository _notesRepository;
@@ -117,24 +118,32 @@ namespace NotesApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Note>>> GetNotes()
+        public async Task<ActionResult<List<NoteDTO>>> GetNotes()
         {
             return await _notesRepository.GetNotes();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Note>> GetNote(int id)
+        public async Task<ActionResult<NoteDTO>> GetNote(int id)
         {
             if(! await _notesRepository.NoteExists(id)) { return NotFound();  }
             return await _notesRepository.GetNoteById(id);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Note>> PostNote(Note note)
+        public async Task<ActionResult<NoteDTO>> PostNote(NoteDTO noteDTO)
         {
-            if(note == null) { return BadRequest(); }
+            if(noteDTO == null) { return BadRequest(); }
+            var note = new Note()
+            {
+                Id = noteDTO.Id,
+                Title = noteDTO.Title,
+                Description = noteDTO.Description,
+                NoteActivities = new List<NoteActivity>(),
+                NoteLabels = new List<NoteLabel>()
+            };
             await _notesRepository.PostNote(note);
-            return CreatedAtAction(nameof(GetNote), new { id = note.Id }, note);
+            return CreatedAtAction(nameof(GetNote), new { id = note.Id }, noteDTO);
 
         }
 
@@ -156,6 +165,21 @@ namespace NotesApp.Controllers
             await _notesRepository.DeleteNote(id);
             return NoContent();
         }
+
+        [HttpGet("{id}/activities/last")]
+        public async Task<ActionResult<NoteActivity>> GetLastActivity(int id)
+        {
+            return await _notesRepository.GetLastActivity(id);
+
+        }
+
+        [HttpPost("{id}/labels")]
+        public async Task<ActionResult> AddLabelInNote(int id, NoteLabel label)
+        {
+            await _notesRepository.AddLabel(id, label);
+            return NoContent();
+        }
+
     }
 
 

@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NotesApp.Data;
 using NotesApp.Interface;
 using NotesApp.Repository;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,8 @@ builder.Services.AddDbContext<NoteContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NotesDb"));
 });
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
+builder.Services.AddScoped<INoteLabelRepository, NoteLabelRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddCors();
 
@@ -32,6 +37,7 @@ app.UseHttpsRedirection();
 
 
 app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://127.0.0.1:5173"));
+app.UseAuthentication();
 app.UseAuthorization();
 
 

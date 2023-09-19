@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\NotesApp"
+    "\\NotesApp",
+    "\\NotesApp\\NotesApp",
+    "\\NotesApp\\NotesApp\\Repository"
   ],
+  "SelectedNode": "\\NotesApp\\NotesApp\\Repository\\NoteRepository.cs",
   "PreviewInSolutionExplorer": false
 }
